@@ -13,6 +13,19 @@
 #include <QLabel>
 #include <QScrollBar>
 
+#include "Editor.hpp"
+#include "Node.hpp"
+#include "Connection.hpp"
+#include <QMouseEvent>
+#include <QDebug>
+#include <QVBoxLayout>
+#include <QWheelEvent>
+#include <QGraphicsRectItem>
+#include <QLabel>
+#include <QScrollBar>
+#include <QMessageBox>
+#include <QApplication>
+
 Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr) {
     // Create the scene and set it
     setScene(scene);
@@ -21,6 +34,30 @@ Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScen
 
     // Create the menu bar
     menuBar = new QMenuBar(this);
+    menuBar->setStyleSheet("QMenuBar { background-color: rgb(30, 30, 30); color: white; }"
+                           "QMenuBar::item { background-color: rgb(30, 30, 30); color: white; }"
+                           "QMenuBar::item:selected { background-color: rgb(0, 120, 212); color: white; }"
+                           "QMenu { background-color: rgb(30, 30, 30); color: white; }"
+                           "QMenu::item:selected { background-color: rgb(0, 120, 212); color: white; }");
+
+    // File menu
+    QMenu *fileMenu = menuBar->addMenu("File");
+    newFileAction = new QAction("New", this);
+    connect(newFileAction, &QAction::triggered, this, &Editor::newFile);
+    fileMenu->addAction(newFileAction);
+
+    exitAction = new QAction("Exit", this);
+    connect(exitAction, &QAction::triggered, this, &Editor::exitApp);
+    fileMenu->addAction(exitAction);
+
+    // Edit menu
+    QMenu *editMenu = menuBar->addMenu("Edit");
+    QAction *undoAction = new QAction("Undo", this);
+    editMenu->addAction(undoAction);
+    QAction *redoAction = new QAction("Redo", this);
+    editMenu->addAction(redoAction);
+
+    // Nodes menu
     QMenu *nodesMenu = menuBar->addMenu("Nodes");
 
     // Create the "New Node" action
@@ -72,7 +109,7 @@ void Editor::mouseMoveEvent(QMouseEvent *event) {
         QPointF delta = event->position() - panStartPos;
         panStartPos = event->position();
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() - delta.x());
-        verticalScrollBar()->setValue(verticalScrollBar()->value() - delta.y());
+        verticalScrollBar()->setValue(horizontalScrollBar()->value() - delta.y());
         viewCenter = mapToScene(viewport()->rect().center());
         updatePositionLabel();
         event->accept();
@@ -248,4 +285,15 @@ void Editor::finalizeConnection(ConnectionPoint *start, ConnectionPoint *end) {
 
 QMenuBar *Editor::getMenuBar() const {
     return menuBar;
+}
+
+void Editor::newFile() {
+    // Clear the scene
+    scene->clear();
+    connections.clear();
+    qDebug() << "New file created.";
+}
+
+void Editor::exitApp() {
+    QApplication::quit();
 }

@@ -27,6 +27,10 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
 
+private slots:
+    void newFile();
+    void exitApp();
+
 private:
     void updatePositionLabel();
     void updateConnections();
@@ -34,6 +38,8 @@ private:
     QGraphicsScene *scene;
     QMenuBar *menuBar;
     QAction *newNodeAction;
+    QAction *newFileAction;
+    QAction *exitAction;
     QLabel *positionLabel;
     QPointF viewCenter;
     qreal scaleFactor;
@@ -52,5 +58,6 @@ public slots:
     void cancelConnection();
     void finalizeConnection(ConnectionPoint *start, ConnectionPoint *end);
 };
+
 
 #endif //LOGICGATES_EDITOR_QT_EDITOR_HPP
