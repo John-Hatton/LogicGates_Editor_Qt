@@ -1,18 +1,8 @@
 # Logic Gates Editor
 
-I've gone through and tried to scrape out as much of the example code as I could get. I appreciated
-what was done here with the project structure, so I thought I'd not start from scratch, but try to
-build off of here. Why rebuild the wheel when you've got a wheel you can modify.
-
----
-
-### imgui_nodes_editor
-
-See the original project [here](https://github.com/thedmd/imgui-node-editor)
-
-Also see my writeup on the structure of the project at [imgui_node_editor](./Documentation/NodeEditor/imgui_node_editor.md).
-This should provide a good foundation to build upon.
-
+Another revision of a Logic Gates Editor. This time, I'm working with QT6. We'll see how that 
+works out for me in the end. I tried in imgui, and I found that immediate mode just wasn't 
+fitting for what I'm trying to do. We're connecting Nodes with cables, or connections.
 
 ---
 

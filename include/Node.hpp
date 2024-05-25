@@ -3,14 +3,21 @@
 //
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
+#include <ConnectionPoint.hpp>
+#include <Editor.hpp>
 
-#ifndef COLORSTEALQT_NODE_HPP
-#define COLORSTEALQT_NODE_HPP
 
+#ifndef LOGICGATES_EDITOR_QT_NODE_HPP
+#define LOGICGATES_EDITOR_QT_NODE_HPP
 
-class Node : public QGraphicsRectItem {
+class Node : public QObject, public QGraphicsRectItem {
+Q_OBJECT
+
 public:
-    Node();
+    Node(Editor* editor);
+
+signals:
+    void positionChanged();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -20,7 +27,10 @@ protected:
 private:
     bool dragging;
     QPointF dragStartPos;
+    Editor* editor;
+    ConnectionPoint* inputPoint;
+    ConnectionPoint* outputPoint;
 };
 
 
-#endif //COLORSTEALQT_NODE_HPP
+#endif //LOGICGATES_EDITOR_QT_NODE_HPP

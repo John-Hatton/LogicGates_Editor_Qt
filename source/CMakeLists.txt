@@ -2,10 +2,19 @@ set(SOURCES
 	main.cpp
 	Node.cpp
 	Editor.cpp
+	ConnectionPoint.cpp
+	Connection.cpp
 )
 
+set(HEADERS
+	# We only need to include the headers that have a QOBJECT macro call in them.
+	../include/Node.hpp
+	../include/ConnectionPoint.hpp
+	../include/Editor.hpp
+	../include/Connection.hpp
+)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
