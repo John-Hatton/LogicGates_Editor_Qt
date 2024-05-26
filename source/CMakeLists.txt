@@ -1,4 +1,6 @@
-set(SOURCES 
+set(SOURCES
+		resources.qrc
+
 		main.cpp
 		Node.cpp
 		MainWindow.cpp
