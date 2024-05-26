@@ -1198,6 +1198,7 @@ Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScen
 
     // Create and position the label
     positionLabel = new QLabel(this);
+    positionLabel->setFixedWidth(200);
     positionLabel->setStyleSheet("QLabel { color : white; }");
     positionLabel->setText("Initializing...");
     positionLabel->move(10, height() - 30); // Move to bottom-left corner
@@ -1337,7 +1338,7 @@ void Editor::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void Editor::updatePositionLabel() {
     qDebug() << "Updating position label. View center:" << viewCenter << "Scale factor:" << scaleFactor;
-    positionLabel->setText(QString("Pos: x: %1, y: %2, z: %3").arg(viewCenter.x()).arg(viewCenter.y()).arg(scaleFactor));
+    positionLabel->setText(QString("Pos: x: %1, y: %2, z: %3").arg(viewCenter.x()*-1).arg(viewCenter.y()).arg(scaleFactor));
     // Redraw the background to reflect the new position
     viewport()->update();
 }
