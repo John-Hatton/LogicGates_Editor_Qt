@@ -13,13 +13,11 @@
 #ifndef LOGICGATES_EDITOR_QT_EDITOR_HPP
 #define LOGICGATES_EDITOR_QT_EDITOR_HPP
 
-
 class Editor : public QGraphicsView {
 Q_OBJECT
 
 public:
     Editor(QWidget *parent = nullptr);
-    QMenuBar *getMenuBar() const;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -30,12 +28,18 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void updateNodesPosition(const QPointF &delta);
 
+private slots:
+    void newFile();
+    void exitApp();
+
 private:
     void updatePositionLabel();
     void updateConnections();
 
     QGraphicsScene *scene;
-    QMenuBar *menuBar;
+    QAction *newNodeAction;
+    QAction *newFileAction;
+    QAction *exitAction;
     QLabel *positionLabel;
     QPointF viewCenter;
     qreal scaleFactor;
@@ -55,6 +59,5 @@ public slots:
     void cancelConnection();
     void finalizeConnection(ConnectionPoint *start, ConnectionPoint *end);
 };
-
 
 #endif //LOGICGATES_EDITOR_QT_EDITOR_HPP

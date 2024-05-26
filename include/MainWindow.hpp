@@ -2,7 +2,7 @@
 // Created by John on 5/26/2024.
 //
 #include <QMainWindow>
-#include "Editor.hpp"
+#include <Editor.hpp>
 
 #ifndef LOGICGATES_EDITOR_QT_MAINWINDOW_HPP
 #define LOGICGATES_EDITOR_QT_MAINWINDOW_HPP
@@ -14,15 +14,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
 private slots:
-    void newCanvas();
-    void exitApp();
-    void createNode1();
-    void createNode2();
-    void createNode3();
+    void toggleDockWidget();
 
 private:
-    Editor *editor;
     QDockWidget *dockWidget;
+    Editor *editor;
 };
 
 
