@@ -8,6 +8,7 @@ set(SOURCES
 		Sidebar.cpp
 		ConnectionPoint.cpp
 		Connection.cpp
+		AddNodeCommand.cpp
 
 )
 
