@@ -4,8 +4,7 @@
 #include <QGraphicsLineItem>
 #include <ConnectionPoint.hpp>
 
-#ifndef LOGICGATES_EDITOR_QT_CONNECTION_HPP
-#define LOGICGATES_EDITOR_QT_CONNECTION_HPP
+#pragma once //LOGICGATES_EDITOR_QT_CONNECTION_HPP
 
 class Connection : public QObject, public QGraphicsLineItem {
 Q_OBJECT
@@ -19,5 +18,3 @@ private:
     ConnectionPoint *startPoint;
     ConnectionPoint *endPoint;
 };
-
-#endif //LOGICGATES_EDITOR_QT_CONNECTION_HPP

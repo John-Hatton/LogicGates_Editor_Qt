@@ -8,9 +8,9 @@
 Sidebar::Sidebar(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *layout = new QVBoxLayout(this);
 
-    QPushButton *node1Button = new QPushButton("Node 1", this);
-    QPushButton *node2Button = new QPushButton("Node 2", this);
-    QPushButton *node3Button = new QPushButton("Node 3", this);
+    QPushButton *node1Button = new QPushButton("PowerSource", this);
+    QPushButton *node2Button = new QPushButton("DisplayOutput", this);
+    QPushButton *node3Button = new QPushButton("XorGate", this);
 
     layout->addWidget(node1Button);
     layout->addWidget(node2Button);
@@ -20,7 +20,9 @@ Sidebar::Sidebar(QWidget *parent) : QWidget(parent) {
     connect(node1Button, &QPushButton::clicked, this, &Sidebar::handleNode1Clicked);
     connect(node2Button, &QPushButton::clicked, this, &Sidebar::handleNode2Clicked);
     connect(node3Button, &QPushButton::clicked, this, &Sidebar::handleNode3Clicked);
+
 }
+
 
 void Sidebar::handleNode1Clicked() {
     emit node1Clicked();

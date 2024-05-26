@@ -1,12 +1,12 @@
 //
 // Created by John on 5/25/2024.
 //
+
+#pragma once
+
 #include <QGraphicsEllipseItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
-
-#ifndef LOGICGATES_EDITOR_QT_CONNECTIONPOINT_HPP
-#define LOGICGATES_EDITOR_QT_CONNECTIONPOINT_HPP
 
 class ConnectionPoint : public QObject, public QGraphicsEllipseItem {
 Q_OBJECT
@@ -38,4 +38,3 @@ private:
     QPointF scenePos;
 };
 
-#endif //LOGICGATES_EDITOR_QT_CONNECTIONPOINT_HPP

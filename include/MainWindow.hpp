@@ -14,15 +14,18 @@ Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
 
+protected:
+    Editor *editor;
+
 private slots:
     void toggleDockWidget();
 
 private:
     void setupMenuBar();
-    void createNodeButton(const QString &label, QVBoxLayout *layout);
+    QWidget* createNodeButtonWithImage(const QString& imagePath, const QString& buttonText);
 
     QDockWidget *dockWidget;
-    Editor *editor;
+
 };
 
 #endif //LOGICGATES_EDITOR_QT_MAINWINDOW_HPP

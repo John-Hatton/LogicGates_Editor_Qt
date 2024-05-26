@@ -8,18 +8,21 @@ set(SOURCES
 		Sidebar.cpp
 		ConnectionPoint.cpp
 		Connection.cpp
-		AddNodeCommand.cpp
+
+		LogicGates/PowerSource.cpp
 
 )
 
 set(HEADERS
 		# We only need to include the headers that have a QOBJECT macro call in them.
+		../include/AbstractNode.hpp
 		../include/Node.hpp
 		../include/ConnectionPoint.hpp
 		../include/Connection.hpp
 		../include/MainWindow.hpp
 		../include/Editor.hpp
 		../include/Sidebar.hpp
+
 
 )
 

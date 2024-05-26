@@ -16,6 +16,9 @@ Q_OBJECT
 public:
     Node(Editor* editor);
 
+    void setNodeName(const QString &name);
+    void setImage(const QPixmap &pixmap);
+
 signals:
     void positionChanged();
 
@@ -30,7 +33,9 @@ private:
     Editor* editor;
     ConnectionPoint* inputPoint;
     ConnectionPoint* outputPoint;
+    QGraphicsTextItem* nodeNameItem;
+    QGraphicsPixmapItem* imageItem;
+    QGraphicsRectItem* textBackgroundItem;
 };
-
 
 #endif //LOGICGATES_EDITOR_QT_NODE_HPP

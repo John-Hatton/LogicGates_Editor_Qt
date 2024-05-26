@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>hamburger.png</file>
+        <file>../resources/hamburger.png</file>
+        <file>../resources/PowerSource.png</file>
+        <file>../resources/DisplayOutput.png</file>
+        <file>../resources/XorGate.png</file>
     </qresource>
 </RCC>

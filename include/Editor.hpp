@@ -1,19 +1,24 @@
 //
 // Created by John on 5/24/2024.
 //
+#include "AbstractNode.hpp"
+#include <Connection.hpp>
+#include <ConnectionPoint.hpp>
+
+
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QMenuBar>
 #include <QAction>
 #include <QLabel>
-#include <ConnectionPoint.hpp>
-#include <Connection.hpp>
+
+
 #include <QDockWidget>
 #include <QUndoStack>
 #include <QRubberBand>
 
-#ifndef LOGICGATES_EDITOR_QT_EDITOR_HPP
-#define LOGICGATES_EDITOR_QT_EDITOR_HPP
+
+#pragma once //LOGICGATES_EDITOR_QT_EDITOR_HPP
 
 //class Editor : public QGraphicsView {
 //Q_OBJECT
@@ -92,7 +97,7 @@ protected:
 public slots:
     void newFile();
     void exitApp();
-    void createNode();
+    void createNode(AbstractNode* node);
     void newCanvas();
     void startConnection(ConnectionPoint *point);
     void updateConnection(const QPointF &pos);
@@ -118,7 +123,7 @@ private:
     qreal scaleFactor;
     bool isPanning;
     bool isRubberBandSelecting;
-    QPoint panStartPos;
+    QPointF panStartPos;
     QPoint rubberBandStartPos;
     QRubberBand *rubberBand;
     QVector<Connection*> connections;
@@ -129,5 +134,3 @@ private:
 
     QUndoStack *undoStack;
 };
-
-#endif //LOGICGATES_EDITOR_QT_EDITOR_HPP
