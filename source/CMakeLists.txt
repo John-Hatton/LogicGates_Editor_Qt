@@ -1,17 +1,23 @@
 set(SOURCES 
-	main.cpp
-	Node.cpp
-	Editor.cpp
-	ConnectionPoint.cpp
-	Connection.cpp
+		main.cpp
+		Node.cpp
+		MainWindow.cpp
+		Editor.cpp
+		Sidebar.cpp
+		ConnectionPoint.cpp
+		Connection.cpp
+
 )
 
 set(HEADERS
-	# We only need to include the headers that have a QOBJECT macro call in them.
-	../include/Node.hpp
-	../include/ConnectionPoint.hpp
-	../include/Editor.hpp
-	../include/Connection.hpp
+		# We only need to include the headers that have a QOBJECT macro call in them.
+		../include/Node.hpp
+		../include/ConnectionPoint.hpp
+		../include/Connection.hpp
+		../include/MainWindow.hpp
+		../include/Editor.hpp
+		../include/Sidebar.hpp
+
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})

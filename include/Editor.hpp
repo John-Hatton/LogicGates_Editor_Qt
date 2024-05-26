@@ -8,9 +8,11 @@
 #include <QLabel>
 #include <ConnectionPoint.hpp>
 #include <Connection.hpp>
+#include <QDockWidget>
 
 #ifndef LOGICGATES_EDITOR_QT_EDITOR_HPP
 #define LOGICGATES_EDITOR_QT_EDITOR_HPP
+
 
 class Editor : public QGraphicsView {
 Q_OBJECT
@@ -26,10 +28,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
-
-private slots:
-    void newFile();
-    void exitApp();
+    void updateNodesPosition(const QPointF &delta);
 
 private:
     void updatePositionLabel();
@@ -37,9 +36,6 @@ private:
 
     QGraphicsScene *scene;
     QMenuBar *menuBar;
-    QAction *newNodeAction;
-    QAction *newFileAction;
-    QAction *exitAction;
     QLabel *positionLabel;
     QPointF viewCenter;
     qreal scaleFactor;
@@ -52,6 +48,7 @@ private:
 
 public slots:
     void createNode();
+    void newCanvas();
     void startConnection(ConnectionPoint *point);
     void updateConnection(const QPointF &pos);
     void endConnection(ConnectionPoint *point);
