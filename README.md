@@ -1,5 +1,7 @@
 # Logic Gates Editor
 
+<img src="resources/LogicGates_Editor.png">
+
 Another revision of a Logic Gates Editor. This time, I'm working with QT6. We'll see how that 
 works out for me in the end. I tried in imgui, and I found that immediate mode just wasn't 
 fitting for what I'm trying to do. We're connecting Nodes with cables, or connections.

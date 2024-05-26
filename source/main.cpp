@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
     app.setPalette(customPalette);
 
     MainWindow mainWindow;
-    mainWindow.setWindowTitle("Draggable Nodes");
+    mainWindow.setWindowTitle("Logic Gates Editor");
     mainWindow.resize(1200, 800);
     mainWindow.show();
 
