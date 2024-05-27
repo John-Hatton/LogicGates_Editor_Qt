@@ -7,6 +7,13 @@
 #include <QObject>
 #include "Editor.hpp"
 
+#include <Node.hpp>
+#include <QBrush>
+#include <QObject>
+#include <QFont>
+#include <QDebug>
+#include "Editor.hpp"
+
 Node::Node(Editor *editor) : QObject(), QGraphicsRectItem(), dragging(false), editor(editor) {
     setRect(0, 0, 100, 50);
     setFlag(QGraphicsItem::ItemIsMovable);
@@ -40,6 +47,16 @@ Node::Node(Editor *editor) : QObject(), QGraphicsRectItem(), dragging(false), ed
 
     // Add image item
     imageItem = new QGraphicsPixmapItem(this);
+
+    // Add small button on the left side
+    leftButton = new QGraphicsRectItem(this);
+    leftButton->setRect(-10, (rect().height() / 2) - 5, 10, 10);
+    leftButton->setBrush(Qt::gray);
+
+    // Add small green box on the right side
+    rightBox = new QGraphicsRectItem(this);
+    rightBox->setRect(rect().width(), (rect().height() / 2) - 5, 10, 10);
+    rightBox->setBrush(Qt::green);
 }
 
 void Node::setNodeName(const QString &name) {

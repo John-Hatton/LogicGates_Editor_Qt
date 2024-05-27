@@ -2,6 +2,8 @@
 // Created by John on 5/25/2024.
 //
 #include "ConnectionPoint.hpp"
+#include "AbstractNode.hpp"
+#include "Connection.hpp"
 #include <QBrush>
 #include <QPen>
 
@@ -11,6 +13,7 @@ ConnectionPoint::ConnectionPoint(qreal x, qreal y, qreal radius, PointType type,
     setBrush(Qt::black);
     setPen(QPen(Qt::black));
     setAcceptHoverEvents(true);
+    connection = nullptr;
 }
 
 void ConnectionPoint::setPosition(const QPointF &pos) {
@@ -53,4 +56,20 @@ void ConnectionPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     } else {
         QGraphicsEllipseItem::mouseReleaseEvent(event);
     }
+}
+
+void ConnectionPoint::setNode(AbstractNode *myNode) {
+    node = myNode;
+}
+
+AbstractNode *ConnectionPoint::getNode() const {
+    return node;
+}
+
+void ConnectionPoint::setConnection(Connection *con) {
+    connection = con;
+}
+
+Connection *ConnectionPoint::getConnection() {
+    return connection;
 }

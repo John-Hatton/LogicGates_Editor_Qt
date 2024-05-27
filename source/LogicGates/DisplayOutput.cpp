@@ -20,6 +20,7 @@ DisplayOutput::DisplayOutput() : AbstractNode() {
 
     // Add connection points
     inputPoint = new ConnectionPoint(rect().left(), rect().center().y(), 5, ConnectionPoint::Input, this);
+    inputPoint->setNode(this);
 
     // Connect the signals to the editor slots
 

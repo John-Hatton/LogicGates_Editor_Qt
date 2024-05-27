@@ -3,11 +3,13 @@
 //
 
 #include "LogicGates/PowerSource.hpp"
+#include "Connection.hpp"
 #include <QCursor>
 
 PowerSource::PowerSource() : AbstractNode() {
 
     PowerSource::setNodeName("Power Source");
+    state_ = DISABLED;
     setHasInputNode(false);
     setHasOutputNode(true);
 
@@ -20,6 +22,7 @@ PowerSource::PowerSource() : AbstractNode() {
 
     // Add connection points
     outputPoint = new ConnectionPoint(rect().right(), rect().center().y(), 5, ConnectionPoint::Output, this);
+    outputPoint->setNode(this);
 
     // Connect the signals to the editor slots
 
@@ -37,9 +40,31 @@ PowerSource::PowerSource() : AbstractNode() {
 
     QPixmap pixmap(":/resources/PowerSource.png");
     PowerSource::setImage(pixmap);
+
+    // Add small button on the left side
+    leftButton = new QGraphicsRectItem(this);
+    leftButton->setRect(5, (rect().height() / 2) - 10, 25, 25);
+    leftButton->setBrush(Qt::gray);
+
+    // Add text on the button
+    leftButtonText = new QGraphicsTextItem("O/I", leftButton);
+    leftButtonText->setDefaultTextColor(Qt::white);
+    leftButtonText->setFont(QFont("Arial", 8)); // Adjust font size as needed
+
+    // Center the text in the button
+    QRectF buttonRect = leftButton->rect();
+    QRectF textRect = leftButtonText->boundingRect();
+    leftButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
+                           buttonRect.top() + (buttonRect.height() - textRect.height()) / 2);
+
+    // Add small green box on the right side
+    rightBox = new QGraphicsRectItem(this);
+    rightBox->setRect(rect().width() - 31, (rect().height() / 2) - 10, 25, 25);
+    rightBox->setBrush(Qt::black);
 }
 
 void PowerSource::setNodeName(const QString &name) {
+    nodeName = name;
     nodeNameItem->setPlainText(name);
     // Calculate the position for the text background
     QRectF textRect = nodeNameItem->boundingRect();
@@ -71,9 +96,15 @@ void PowerSource::setImage(const QPixmap& pixmap) {
 
 void PowerSource::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        dragging = true;
-        dragStartPos = event->pos();
-        setCursor(Qt::ClosedHandCursor);
+        if (leftButton->contains(event->pos())) {
+            buttonPressed = true;
+            updateButtonAppearance(true);
+            handleButtonClick(event);
+        } else {
+            dragging = true;
+            dragStartPos = event->pos();
+            setCursor(Qt::ClosedHandCursor);
+        }
     }
     QGraphicsRectItem::mousePressEvent(event);
 }
@@ -88,6 +119,11 @@ void PowerSource::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void PowerSource::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    if (buttonPressed) {
+        buttonPressed = false;
+        updateButtonAppearance(false);
+    }
+
     if (event->button() == Qt::LeftButton) {
         dragging = false;
         setCursor(Qt::ArrowCursor);
@@ -95,12 +131,64 @@ void PowerSource::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsRectItem::mouseReleaseEvent(event);
 }
 
+void PowerSource::ChangeState(State state) {
+
+    if (state == DISABLED)
+    {
+        rightBox->setBrush(Qt::black);
+        if (outputPoint->getConnection())
+        {
+            auto conn = outputPoint->getConnection();
+            conn->setColor(Qt::black);
+        }
+    }
+    if (state == OFF)
+    {
+        rightBox->setBrush(Qt::red);
+        if (outputPoint->getConnection())
+        {
+            auto conn = outputPoint->getConnection();
+            conn->setColor(Qt::red);
+        }
+    }
+    if (state == ON)
+    {
+        rightBox->setBrush(Qt::green);
+        if (outputPoint->getConnection())
+        {
+            auto conn = outputPoint->getConnection();
+            conn->setColor(Qt::green);
+        }
+    }
+
+    state_ = state;
+
+
+    Notify();
+}
+
+void PowerSource::ToggleState() {
+    if (state_ == DISABLED)
+    {
+        ChangeState(OFF);
+    }
+    else if (state_ == OFF)
+    {
+        ChangeState(ON);
+    }
+    else if (state_ == ON)
+    {
+        ChangeState(DISABLED);
+    }
+}
+
 State PowerSource::GetState() const {
-    return ON; // TODO: Change this later
+    return state_;
 }
 
 void PowerSource::Update(State state) {
-        // do something...
+    // Do nothing!
+    // The switch doesn't have any objects, this is just for show.
 }
 
 ConnectionPoint *PowerSource::getInputPoint() const {
@@ -110,3 +198,25 @@ ConnectionPoint *PowerSource::getInputPoint() const {
 ConnectionPoint *PowerSource::getOutputPoint() const {
     return outputPoint;
 }
+
+void PowerSource::handleButtonClick(QGraphicsSceneMouseEvent *event) {
+    ToggleState();
+    qDebug() << "*** - Power Source Button was clicked";
+}
+
+void PowerSource::updateButtonAppearance(bool pressed) {
+    if (pressed) {
+        leftButton->moveBy(1, 1); // Move button slightly down and right
+        leftButton->setBrush(Qt::darkGray); // Change color to indicate it's pressed
+    } else {
+        leftButton->moveBy(-1, -1); // Move button back to original position
+        leftButton->setBrush(Qt::gray); // Change color back to original
+    }
+    // Update text position accordingly
+    QRectF buttonRect = leftButton->rect();
+    QRectF textRect = leftButtonText->boundingRect();
+    leftButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
+                           buttonRect.top() + (buttonRect.height() - textRect.height()) / 2);
+}
+
+

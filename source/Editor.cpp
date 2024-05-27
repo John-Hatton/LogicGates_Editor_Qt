@@ -284,7 +284,7 @@
 #include <QUndoCommand>
 #include "AbstractNode.hpp"
 
-Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr) {
+Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr), lastHoveredPoint(nullptr){
     // Create the scene and set it
     setScene(scene);
     setRenderHint(QPainter::Antialiasing);
@@ -373,8 +373,13 @@ void Editor::mouseMoveEvent(QMouseEvent *event) {
         for (QGraphicsItem *item : scene->items(scenePos)) {
             if (ConnectionPoint *point = dynamic_cast<ConnectionPoint*>(item)) {
                 if (point != startPoint && point->getPointType() != startPoint->getPointType()) {
-                    point->setBrush(Qt::green);
-                    hoveredPoint = point;
+                    if (point->getPointType() == ConnectionPoint::Input && point->isConnected()) {
+                        point->setBrush(Qt::red); // Input already connected
+                    } else {
+                        point->setBrush(Qt::green);
+                        hoveredPoint = point;
+                    }
+                    lastHoveredPoint = point;
                     break;
                 }
             }
@@ -394,10 +399,14 @@ void Editor::mouseReleaseEvent(QMouseEvent *event) {
         qDebug() << "Right mouse button released. Stopping panning.";
         event->accept();
     } else if (event->button() == Qt::LeftButton && currentConnection) {
-        if (hoveredPoint) {
+        if (hoveredPoint && !(hoveredPoint->getPointType() == ConnectionPoint::Input && hoveredPoint->isConnected())) {
             endConnection(hoveredPoint);
         } else {
             cancelConnection();
+        }
+        if (lastHoveredPoint) { // Reset the color of the last hovered point
+            lastHoveredPoint->setBrush(Qt::black);
+            lastHoveredPoint = nullptr;
         }
         event->accept();
     } else {
@@ -532,7 +541,9 @@ void Editor::cancelConnection() {
 
 void Editor::finalizeConnection(ConnectionPoint *start, ConnectionPoint *end) {
     // Create a new connection and add it to the collection
-    Connection *connection = new Connection(start, end, scene);
+    auto connection = new Connection(start, end, scene);
+    start->setConnection(connection);
+    end->setConnection(connection);
     connections.push_back(connection);
     qDebug() << "Finalized connection from" << start->toString() << "to" << end->toString();
     // Remove the temporary connection line
@@ -558,10 +569,32 @@ void Editor::exitApp() {
     QApplication::quit();
 }
 
-void Editor::undo() {
-    undoStack->undo();
-}
+void Editor::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Delete) {
+        QList<QGraphicsItem*> selectedItems = scene->selectedItems();
+        for (QGraphicsItem* item : selectedItems) {
+            if (auto node = dynamic_cast<AbstractNode*>(item)) {
+                // Remove connections associated with the node
+                for (auto connection : connections) {
+                    if (connection->getStartPoint()->getNode() == node || connection->getEndPoint()->getNode() == node) {
+                        scene->removeItem(connection);
+                        delete connection;
+                    }
+                }
+                connections.erase(std::remove_if(connections.begin(), connections.end(),
+                                                 [node](Connection* connection) {
+                                                     return connection->getStartPoint()->getNode() == node ||
+                                                            connection->getEndPoint()->getNode() == node;
+                                                 }),
+                                  connections.end());
 
-void Editor::redo() {
-    undoStack->redo();
+                scene->removeItem(node);
+                qDebug() << "Node deleted:" << node->toString();
+                delete node;
+
+            }
+        }
+    } else {
+        QGraphicsView::keyPressEvent(event);
+    }
 }

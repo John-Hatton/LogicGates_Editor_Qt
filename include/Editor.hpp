@@ -92,6 +92,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
+    void keyPressEvent(QKeyEvent *event) override;
     void updateNodesPosition(const QPointF &delta);
 
 public slots:
@@ -104,8 +105,7 @@ public slots:
     void endConnection(ConnectionPoint *point);
     void cancelConnection();
     void finalizeConnection(ConnectionPoint *start, ConnectionPoint *end);
-    void undo();
-    void redo();
+
 
 private:
     void updatePositionLabel();
@@ -131,6 +131,6 @@ private:
     ConnectionPoint *startPoint;
     ConnectionPoint *hoveredPoint;
     QPointF dragStartPos;
+    ConnectionPoint* lastHoveredPoint;
 
-    QUndoStack *undoStack;
 };

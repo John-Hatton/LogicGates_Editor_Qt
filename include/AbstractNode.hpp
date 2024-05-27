@@ -20,6 +20,9 @@ Q_OBJECT
 public:
     AbstractNode() : QObject(), QGraphicsRectItem(), dragging(false)
     {
+
+        observers_ = {};
+
         setRect(0, 0, 100, 50);
         setFlag(QGraphicsItem::ItemIsMovable);
         setFlag(QGraphicsItem::ItemIsSelectable);
@@ -55,6 +58,7 @@ protected:
 
     QGraphicsRectItem* textBackgroundItem;
     QGraphicsTextItem* nodeNameItem;
+    QString nodeName;
     QGraphicsPixmapItem* imageItem;
 
 
@@ -123,6 +127,17 @@ public:
         AbstractNode::hasTwoInputTwoOutput = hasTwoInputTwoOutput;
     }
 
+    QString toString()
+    {
+        if (nodeName.length() > 0)
+        {
+            return nodeName;
+        }
+        else
+        {
+            return "AbstractNode (not initialized)";
+        }
+    }
 
 private:
 

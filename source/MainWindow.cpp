@@ -534,15 +534,59 @@ void MainWindow::setupMenuBar() {
     connect(exitAction, &QAction::triggered, qApp, &QApplication::quit);
     fileMenu->addAction(exitAction);
 
-    // Create the edit menu
-    QMenu *editMenu = menuBar->addMenu("Edit");
-
-    QAction *undoAction = new QAction("Undo", this);
-    editMenu->addAction(undoAction);
-
-    QAction *redoAction = new QAction("Redo", this);
-    editMenu->addAction(redoAction);
+//    // Create the edit menu
+//    QMenu *editMenu = menuBar->addMenu("Edit");
+//
+//    QAction *undoAction = new QAction("Undo", this);
+//    editMenu->addAction(undoAction);
+//
+//    QAction *redoAction = new QAction("Redo", this);
+//    editMenu->addAction(redoAction);
 }
+
+//QWidget* MainWindow::createNodeButtonWithImage(const QString& imagePath, const QString& buttonText) {
+//    QWidget *widget = new QWidget();
+//    QVBoxLayout *layout = new QVBoxLayout(widget);
+//    layout->setContentsMargins(0, 0, 0, 0);
+//    layout->setSpacing(2); // Adjust the spacing between image and button
+//
+//    QLabel *imageLabel = new QLabel(widget);
+//    QPixmap pixmap(imagePath);
+//    imageLabel->setPixmap(pixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+//    layout->addWidget(imageLabel, 0, Qt::AlignHCenter);
+//
+//    QPushButton *button = new QPushButton(buttonText, widget);
+//    button->setFixedSize(100, 30); // Adjust the button size to fit the sidebar width
+//    button->setStyleSheet("background-color: #0078D4; color: white; border: none; padding: 5px; text-align: center;");
+//    layout->addWidget(button);
+//
+//    AbstractNode* node;
+//
+//    if (buttonText == "Power Source")
+//    {
+//        node = new PowerSource();
+//    }
+//    else if (buttonText == "Display Output")
+//    {
+//        node = new DisplayOutput();
+//    }
+//    else
+//    {
+//        node = nullptr;
+//        qDebug() << "An error occurred. You did not populate the Node Name, or it was not defined in " <<
+//                    "the MainWindow class." ;
+//    }
+//
+//    auto myEditor = editor;
+//
+//    connect(button, &QPushButton::clicked, editor, [myEditor, node]() {
+//
+//        myEditor->createNode(node);
+//    });
+//
+//
+//    return widget;
+//}
 
 QWidget* MainWindow::createNodeButtonWithImage(const QString& imagePath, const QString& buttonText) {
     QWidget *widget = new QWidget();
@@ -560,26 +604,20 @@ QWidget* MainWindow::createNodeButtonWithImage(const QString& imagePath, const Q
     button->setStyleSheet("background-color: #0078D4; color: white; border: none; padding: 5px; text-align: center;");
     layout->addWidget(button);
 
-    AbstractNode* node;
-
-    if (buttonText == "Power Source")
-    {
-        node = new PowerSource();
-    }
-    else if (buttonText == "Display Output")
-    {
-        node = new DisplayOutput();
-    }
-    else
-    {
-        node = nullptr;
-        qDebug() << "An error occurred. You did not populate the Node Name, or it was not defined in " <<
-                    "the MainWindow class." ;
-    }
-
     auto myEditor = editor;
 
-    connect(button, &QPushButton::clicked, editor, [myEditor, node]() {
+    connect(button, &QPushButton::clicked, editor, [myEditor, buttonText]() {
+        AbstractNode* node = nullptr;
+
+        if (buttonText == "Power Source") {
+            node = new PowerSource();
+        } else if (buttonText == "Display Output") {
+            node = new DisplayOutput();
+        } else {
+            qDebug() << "An error occurred. You did not populate the Node Name, or it was not defined in "
+                     << "the MainWindow class.";
+            return;
+        }
 
         myEditor->createNode(node);
     });

@@ -36,6 +36,9 @@ private:
     QGraphicsTextItem* nodeNameItem;
     QGraphicsPixmapItem* imageItem;
     QGraphicsRectItem* textBackgroundItem;
+
+    QGraphicsRectItem* leftButton;
+    QGraphicsRectItem* rightBox;
 };
 
 #endif //LOGICGATES_EDITOR_QT_NODE_HPP

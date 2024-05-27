@@ -8,6 +8,9 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
 
+class AbstractNode; // Forward Declaration
+class Connection;
+
 class ConnectionPoint : public QObject, public QGraphicsEllipseItem {
 Q_OBJECT
 
@@ -19,6 +22,12 @@ public:
     QPointF getScenePosition() const { return mapToScene(rect().center()); }
     PointType getPointType() const { return pointType; }
     QString toString() const;
+    void setNode(AbstractNode* myNode);
+    AbstractNode* getNode() const;
+    void setConnection(Connection* connection);
+    Connection* getConnection();
+    bool isConnected() const { return connection != nullptr; } // Check if the point is connected
+    void resetConnection() { connection = nullptr; } // Reset the connection
 
 signals:
     void connectionStarted(ConnectionPoint *point);
@@ -36,5 +45,7 @@ protected:
 private:
     PointType pointType;
     QPointF scenePos;
+    AbstractNode* node;
+    Connection* connection;
 };
 
