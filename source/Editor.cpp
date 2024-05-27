@@ -283,6 +283,7 @@
 #include <QUndoStack>
 #include <QUndoCommand>
 #include "AbstractNode.hpp"
+#include "LogicGates/DisplayOutput.hpp"
 
 Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr), lastHoveredPoint(nullptr){
     // Create the scene and set it
@@ -544,6 +545,10 @@ void Editor::finalizeConnection(ConnectionPoint *start, ConnectionPoint *end) {
     auto connection = new Connection(start, end, scene);
     start->setConnection(connection);
     end->setConnection(connection);
+    if (auto node = dynamic_cast<DisplayOutput*>(end->getNode()))
+    {
+        node->setInput(start->getNode());
+    }
     connections.push_back(connection);
     qDebug() << "Finalized connection from" << start->toString() << "to" << end->toString();
     // Remove the temporary connection line

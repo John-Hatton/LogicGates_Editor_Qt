@@ -3,6 +3,7 @@
 //
 
 #include "LogicGates/DisplayOutput.hpp"
+#include "Connection.hpp"
 #include <QCursor>
 
 DisplayOutput::DisplayOutput() : AbstractNode() {
@@ -38,6 +39,11 @@ DisplayOutput::DisplayOutput() : AbstractNode() {
 
     QPixmap pixmap(":/resources/DisplayOutput.png");
     DisplayOutput::setImage(pixmap);
+
+    // Add small green box on the right side
+    rightBox = new QGraphicsRectItem(this);
+    rightBox->setRect(rect().width() - 31, (rect().height() / 2) - 10, 25, 25);
+    rightBox->setBrush(Qt::black);
 }
 
 void DisplayOutput::setNodeName(const QString &name) {
@@ -97,11 +103,41 @@ void DisplayOutput::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 State DisplayOutput::GetState() const {
-    return ON; // TODO: Change this later
+    return state_; //
 }
 
 void DisplayOutput::Update(State state) {
-    // do something...
+
+    if (state == DISABLED)
+    {
+        rightBox->setBrush(Qt::black);
+        if (inputPoint->getConnection())
+        {
+            auto conn = inputPoint->getConnection();
+            conn->setColor(Qt::black);
+        }
+    }
+    if (state == OFF)
+    {
+        rightBox->setBrush(Qt::red);
+        if (inputPoint->getConnection())
+        {
+            auto conn = inputPoint->getConnection();
+            conn->setColor(Qt::red);
+        }
+    }
+    if (state == ON)
+    {
+        rightBox->setBrush(Qt::green);
+        if (inputPoint->getConnection())
+        {
+            auto conn = inputPoint->getConnection();
+            conn->setColor(Qt::green);
+        }
+    }
+
+    state_ = state;
+    Notify();
 }
 
 ConnectionPoint* DisplayOutput::getInputPoint() const {
@@ -110,4 +146,10 @@ ConnectionPoint* DisplayOutput::getInputPoint() const {
 
 ConnectionPoint* DisplayOutput::getOutputPoint() const {
     return nullptr;
+}
+
+void DisplayOutput::setInput(AbstractNode *input) {
+    input_ = input;
+    input_->Attach(this);
+    DisplayOutput::Update(input->GetState());
 }
