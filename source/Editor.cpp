@@ -284,25 +284,6 @@
 #include <QUndoCommand>
 #include "AbstractNode.hpp"
 
-class AddNodeCommand : public QUndoCommand {
-public:
-    AddNodeCommand(Editor *editor, Node *node, QGraphicsScene *scene)
-            : editor(editor), node(node), scene(scene) {}
-
-    void undo() override {
-        scene->removeItem(node);
-    }
-
-    void redo() override {
-        scene->addItem(node);
-    }
-
-private:
-    Editor *editor;
-    Node *node;
-    QGraphicsScene *scene;
-};
-
 Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr) {
     // Create the scene and set it
     setScene(scene);
@@ -330,24 +311,6 @@ void Editor::resizeEvent(QResizeEvent *event) {
     positionLabel->move(10, height() - 30); // Adjust position on resize
 }
 
-//void Editor::createNode() {
-//    Node *node = new Node(this);
-//    undoStack->push(new AddNodeCommand(this, node, scene));
-//    node->setPos(mapToScene(viewport()->rect().center()));
-//    connect(node, &Node::positionChanged, this, &Editor::updateConnections);
-//    qDebug() << "Node created at position:" << node->pos();
-//}
-
-//void Editor::createNode() {
-//    Node *node = new Node(this);
-//    scene->addItem(node);
-//    node->setPos(mapToScene(viewport()->rect().center()));
-//    node->setNodeName("Node");
-//    node->setImage(QPixmap(":/resources/Node.png"));
-//    connect(node, &Node::positionChanged, this, &Editor::updateConnections);
-//    qDebug() << "Node created at position:" << node->pos();
-//}
-
 void Editor::createNode(AbstractNode* abstractNode) {
 
     //Node *node = new Node(this);
@@ -369,21 +332,9 @@ void Editor::createNode(AbstractNode* abstractNode) {
         QObject::connect(node->getOutputPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
     }
 
-
-
-
-
     scene->addItem(node);
     node->setPos(mapToScene(viewport()->rect().center()));
-    //node->setNodeName("XorGate");
-    //QPixmap pixmap(":/resources/XorGate.png");
-            // We get image in the class constructors now
-//    if (pixmap.isNull()) {
-//        qDebug() << "Failed to load image from resources.";
-//    } else {
-//        node->setImage();
-//        qDebug() << "Image loaded from resources.";
-//    }
+
     connect(node, &AbstractNode::positionChanged, this, &Editor::updateConnections);
     qDebug() << "Node created at position:" << node->pos();
 }
@@ -516,8 +467,8 @@ void Editor::updateConnections() {
 }
 
 void Editor::updateNodesPosition(const QPointF &delta) {
-    for (QGraphicsItem *item : scene->items()) {
-        if (Node *node = dynamic_cast<Node*>(item)) {
+    for (QGraphicsItem* item : scene->items()) {
+        if (auto node = dynamic_cast<AbstractNode*>(item)) {
             node->moveBy(delta.x(), delta.y());
         }
     }

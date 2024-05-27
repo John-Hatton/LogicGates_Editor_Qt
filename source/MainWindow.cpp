@@ -446,6 +446,7 @@
 
 #include "MainWindow.hpp"
 #include "LogicGates/PowerSource.hpp"
+#include "LogicGates/DisplayOutput.hpp"
 #include <QMenuBar>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -564,6 +565,10 @@ QWidget* MainWindow::createNodeButtonWithImage(const QString& imagePath, const Q
     if (buttonText == "Power Source")
     {
         node = new PowerSource();
+    }
+    else if (buttonText == "Display Output")
+    {
+        node = new DisplayOutput();
     }
     else
     {

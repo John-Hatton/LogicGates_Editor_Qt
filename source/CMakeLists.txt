@@ -10,6 +10,7 @@ set(SOURCES
 		Connection.cpp
 
 		LogicGates/PowerSource.cpp
+		LogicGates/DisplayOutput.cpp
 
 )
 

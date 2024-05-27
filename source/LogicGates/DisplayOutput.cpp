@@ -1,13 +1,13 @@
 //
-// Created by John on 5/26/2024.
+// Created by John on 5/27/2024.
 //
 
-#include "LogicGates/PowerSource.hpp"
+#include "LogicGates/DisplayOutput.hpp"
 #include <QCursor>
 
-PowerSource::PowerSource() : AbstractNode() {
+DisplayOutput::DisplayOutput() : AbstractNode() {
 
-    PowerSource::setNodeName("Power Source");
+    DisplayOutput::setNodeName("Display Output");
     setHasInputNode(false);
     setHasOutputNode(true);
 
@@ -19,7 +19,7 @@ PowerSource::PowerSource() : AbstractNode() {
     setBrush(brush);        // Apply the brush to the rectangle
 
     // Add connection points
-    outputPoint = new ConnectionPoint(rect().right(), rect().center().y(), 5, ConnectionPoint::Output, this);
+    inputPoint = new ConnectionPoint(rect().left(), rect().center().y(), 5, ConnectionPoint::Input, this);
 
     // Connect the signals to the editor slots
 
@@ -35,11 +35,11 @@ PowerSource::PowerSource() : AbstractNode() {
     // Add image item
     imageItem = new QGraphicsPixmapItem(this);
 
-    QPixmap pixmap(":/resources/PowerSource.png");
-    PowerSource::setImage(pixmap);
+    QPixmap pixmap(":/resources/DisplayOutput.png");
+    DisplayOutput::setImage(pixmap);
 }
 
-void PowerSource::setNodeName(const QString &name) {
+void DisplayOutput::setNodeName(const QString &name) {
     nodeNameItem->setPlainText(name);
     // Calculate the position for the text background
     QRectF textRect = nodeNameItem->boundingRect();
@@ -55,7 +55,7 @@ void PowerSource::setNodeName(const QString &name) {
     nodeNameItem->setPos(xPos + 3, yPos); // Add padding for the text inside the background
 }
 
-void PowerSource::setImage(const QPixmap& pixmap) {
+void DisplayOutput::setImage(const QPixmap& pixmap) {
     if (!pixmap.isNull()) {
         QPixmap scaledPixmap = pixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation); // Adjust size as needed
         imageItem->setPixmap(scaledPixmap);
@@ -69,7 +69,7 @@ void PowerSource::setImage(const QPixmap& pixmap) {
     }
 }
 
-void PowerSource::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void DisplayOutput::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         dragging = true;
         dragStartPos = event->pos();
@@ -78,7 +78,7 @@ void PowerSource::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsRectItem::mousePressEvent(event);
 }
 
-void PowerSource::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void DisplayOutput::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     if (dragging) {
         QPointF offset = event->pos() - dragStartPos;
         moveBy(offset.x(), offset.y());
@@ -87,7 +87,7 @@ void PowerSource::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsRectItem::mouseMoveEvent(event);
 }
 
-void PowerSource::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void DisplayOutput::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         dragging = false;
         setCursor(Qt::ArrowCursor);
@@ -95,18 +95,18 @@ void PowerSource::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsRectItem::mouseReleaseEvent(event);
 }
 
-State PowerSource::GetState() const {
+State DisplayOutput::GetState() const {
     return ON; // TODO: Change this later
 }
 
-void PowerSource::Update(State state) {
-        // do something...
+void DisplayOutput::Update(State state) {
+    // do something...
 }
 
-ConnectionPoint *PowerSource::getInputPoint() const {
+ConnectionPoint* DisplayOutput::getInputPoint() const {
+    return inputPoint;
+}
+
+ConnectionPoint* DisplayOutput::getOutputPoint() const {
     return nullptr;
-}
-
-ConnectionPoint *PowerSource::getOutputPoint() const {
-    return outputPoint;
 }
