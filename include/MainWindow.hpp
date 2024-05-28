@@ -26,6 +26,13 @@ private:
 
     QDockWidget *dockWidget;
 
+
+    QString const POWER_SOURCE = "Power Source";
+    QString const DISPLAY_OUTPUT = "Display Output";
+    QString const XOR_GATE = "Xor Gate";
+    QString const AND_GATE = "And Gate";
+    QString const OR_GATE = "Or Gate";
+
 };
 
 #endif //LOGICGATES_EDITOR_QT_MAINWINDOW_HPP

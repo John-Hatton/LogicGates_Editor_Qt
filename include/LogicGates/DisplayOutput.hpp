@@ -13,9 +13,6 @@ class DisplayOutput : public AbstractNode {
 public:
     DisplayOutput();
 
-    void setNodeName(const QString &name) override;
-    void setImage(const QPixmap &pixmap) override;
-
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -27,8 +24,7 @@ public:
     // IObserver interface methods
     void Update(State state) override;
 
-    ConnectionPoint* getInputPoint() const;
-    ConnectionPoint* getOutputPoint() const;
+    ConnectionPoint *getInputXPoint() const override;
 
 
 protected:
@@ -39,7 +35,7 @@ protected:
 
     ConnectionPoint* inputPoint;
 
-    QGraphicsRectItem* rightBox;
+    QGraphicsRectItem* stateDisplay;
 
 
 

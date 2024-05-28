@@ -4,5 +4,8 @@
         <file>../resources/PowerSource.png</file>
         <file>../resources/DisplayOutput.png</file>
         <file>../resources/XorGate.png</file>
+        <file>../resources/AndGate.png</file>
+        <file>../resources/OrGate.png</file>
+        <file>../resources/TriState.png</file>
     </qresource>
 </RCC>

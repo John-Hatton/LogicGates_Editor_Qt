@@ -284,6 +284,7 @@
 #include <QUndoCommand>
 #include "AbstractNode.hpp"
 #include "LogicGates/DisplayOutput.hpp"
+#include "LogicGates/AbstractTwoInputNode.hpp"
 
 Editor::Editor(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)), scaleFactor(1.0), isPanning(false), viewCenter(0, 0), currentConnection(nullptr), startPoint(nullptr), hoveredPoint(nullptr), lastHoveredPoint(nullptr){
     // Create the scene and set it
@@ -319,18 +320,70 @@ void Editor::createNode(AbstractNode* abstractNode) {
 
     if (node->getHasInputNode())
     {
-        QObject::connect(node->getInputPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
-        QObject::connect(node->getInputPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
-        QObject::connect(node->getInputPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
-        QObject::connect(node->getInputPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
-    }
 
+        if (node->getHasTwoInputNodes())
+        {
+            if (node->getInputXPoint())
+            {
+                QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+            }
+            if (node->getInputYPoint())
+            {
+                QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+            }
+        }
+        if (node->getHasOutputNode())
+        {
+            if (node->getHasTwoInputTwoOutput())
+            {
+                // Full Adder, etc. case
+                if (node->getInputXPoint())
+                {
+                    QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                    QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                    QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                    QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+                }
+                if (node->getInputYPoint())
+                {
+                    QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                    QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                    QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                    QObject::connect(node->getInputYPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+                }
+                if (node->getOutputXPoint())
+                {
+                    QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                    QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                    QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                    QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+                }
+                if (node->getOutputYPoint())
+                {
+                    QObject::connect(node->getOutputYPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+                    QObject::connect(node->getOutputYPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+                    QObject::connect(node->getOutputYPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+                    QObject::connect(node->getOutputYPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+                }
+            }
+        }
+        QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+        QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+        QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+        QObject::connect(node->getInputXPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+    }
     if (node->getHasOutputNode())
     {
-        QObject::connect(node->getOutputPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
-        QObject::connect(node->getOutputPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
-        QObject::connect(node->getOutputPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
-        QObject::connect(node->getOutputPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
+        QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionStarted, this, &Editor::startConnection);
+        QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionUpdated, this, &Editor::updateConnection);
+        QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionEnded, this, &Editor::endConnection);
+        QObject::connect(node->getOutputXPoint(), &ConnectionPoint::connectionCanceled, this, &Editor::cancelConnection);
     }
 
     scene->addItem(node);
@@ -549,6 +602,38 @@ void Editor::finalizeConnection(ConnectionPoint *start, ConnectionPoint *end) {
     {
         node->setInput(start->getNode());
     }
+    if (auto node = dynamic_cast<AbstractTwoInputNode*>(end->getNode()))
+    {
+        if (end == node->getInputXPoint())
+        {
+            node->setInputX(start->getNode());
+        }
+        if (end == node->getInputYPoint())
+        {
+            node->setInputY(start->getNode());
+        }
+
+    }
+
+    if (start->getPointType() == ConnectionPoint::Input)
+    {
+        if (auto node = dynamic_cast<DisplayOutput*>(start->getNode()))
+        {
+            node->setInput(end->getNode());
+        }
+        if (auto node = dynamic_cast<AbstractTwoInputNode*>(start->getNode()))
+        {
+            if (start == node->getInputXPoint())
+            {
+                node->setInputX(end->getNode());
+            }
+            if (start == node->getInputYPoint())
+            {
+                node->setInputY(end->getNode());
+            }
+
+        }
+    }
     connections.push_back(connection);
     qDebug() << "Finalized connection from" << start->toString() << "to" << end->toString();
     // Remove the temporary connection line
@@ -574,31 +659,78 @@ void Editor::exitApp() {
     QApplication::quit();
 }
 
+//void Editor::keyPressEvent(QKeyEvent *event) {
+//    if (event->key() == Qt::Key_Delete) {
+//        QList<QGraphicsItem*> selectedItems = scene->selectedItems();
+//        for (QGraphicsItem* item : selectedItems) {
+//            if (auto node = dynamic_cast<AbstractNode*>(item)) {
+//                // Remove connections associated with the node
+//                for (auto connection : connections) {
+//                    if (connection->getStartPoint()->getNode() == node || connection->getEndPoint()->getNode() == node) {
+//                        scene->removeItem(connection);
+//                        delete connection;
+//                    }
+//                }
+//                connections.erase(std::remove_if(connections.begin(), connections.end(),
+//                                                 [node](Connection* connection) {
+//                                                     return connection->getStartPoint()->getNode() == node ||
+//                                                            connection->getEndPoint()->getNode() == node;
+//                                                 }),
+//                                  connections.end());
+//
+//                scene->removeItem(node);
+//                qDebug() << "Node deleted:" << node->toString();
+//                delete node;
+//
+//            }
+//        }
+//    } else {
+//        QGraphicsView::keyPressEvent(event);
+//    }
+//}
 void Editor::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Delete) {
         QList<QGraphicsItem*> selectedItems = scene->selectedItems();
+        std::vector<Connection*> connectionsToDelete; // To collect connections to delete
+
         for (QGraphicsItem* item : selectedItems) {
             if (auto node = dynamic_cast<AbstractNode*>(item)) {
-                // Remove connections associated with the node
+                // Collect connections associated with the node
                 for (auto connection : connections) {
                     if (connection->getStartPoint()->getNode() == node || connection->getEndPoint()->getNode() == node) {
-                        scene->removeItem(connection);
-                        delete connection;
+                        connectionsToDelete.push_back(connection);
                     }
                 }
-                connections.erase(std::remove_if(connections.begin(), connections.end(),
-                                                 [node](Connection* connection) {
-                                                     return connection->getStartPoint()->getNode() == node ||
-                                                            connection->getEndPoint()->getNode() == node;
-                                                 }),
-                                  connections.end());
+
+                if (node->getOutputXPoint()->isConnected())
+                {
+                    // Set the not deleted node's state to disabled
+                    node->getOutputXPoint()->getConnection()->getEndPoint()->getNode()->Update(DISABLED);
+                    // Reset EndPoint of Connection
+                    node->getOutputXPoint()->getConnection()->getEndPoint()->resetConnection();
+                    // Reset StartPoint of Connection
+                    node->getOutputXPoint()->resetConnection();
+
+                }
 
                 scene->removeItem(node);
                 qDebug() << "Node deleted:" << node->toString();
                 delete node;
-
             }
         }
+
+        // Delete the collected connections
+        for (auto connection : connectionsToDelete) {
+            scene->removeItem(connection);
+            delete connection;
+        }
+
+        // Erase deleted connections from the main list
+        connections.erase(std::remove_if(connections.begin(), connections.end(),
+                                         [&connectionsToDelete](Connection* connection) {
+                                             return std::find(connectionsToDelete.begin(), connectionsToDelete.end(), connection) != connectionsToDelete.end();
+                                         }),
+                          connections.end());
     } else {
         QGraphicsView::keyPressEvent(event);
     }

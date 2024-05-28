@@ -4,7 +4,6 @@
 
 #include "LogicGates/PowerSource.hpp"
 #include "Connection.hpp"
-#include <QCursor>
 
 PowerSource::PowerSource() : AbstractNode() {
 
@@ -24,79 +23,35 @@ PowerSource::PowerSource() : AbstractNode() {
     outputPoint = new ConnectionPoint(rect().right(), rect().center().y(), 5, ConnectionPoint::Output, this);
     outputPoint->setNode(this);
 
-    // Connect the signals to the editor slots
-
-    // Add text background item
-    textBackgroundItem = new QGraphicsRectItem(this);
-    textBackgroundItem->setBrush(Qt::black);
-
-    // Add node name item
-    nodeNameItem = new QGraphicsTextItem(this);
-    nodeNameItem->setDefaultTextColor(Qt::white);
-    nodeNameItem->setFont(QFont("Arial", 12));
-
-    // Add image item
-    imageItem = new QGraphicsPixmapItem(this);
-
+    // Set Image
     QPixmap pixmap(":/resources/PowerSource.png");
     PowerSource::setImage(pixmap);
 
     // Add small button on the left side
-    leftButton = new QGraphicsRectItem(this);
-    leftButton->setRect(5, (rect().height() / 2) - 10, 25, 25);
-    leftButton->setBrush(Qt::gray);
+    toggleStateButton = new QGraphicsRectItem(this);
+    toggleStateButton->setRect(5, (rect().height() / 2) - 10, 25, 25);
+    toggleStateButton->setBrush(Qt::gray);
 
     // Add text on the button
-    leftButtonText = new QGraphicsTextItem("O/I", leftButton);
-    leftButtonText->setDefaultTextColor(Qt::white);
-    leftButtonText->setFont(QFont("Arial", 8)); // Adjust font size as needed
+    toggleStateButtonText = new QGraphicsTextItem("O/I", toggleStateButton);
+    toggleStateButtonText->setDefaultTextColor(Qt::white);
+    toggleStateButtonText->setFont(QFont("Arial", 8)); // Adjust font size as needed
 
     // Center the text in the button
-    QRectF buttonRect = leftButton->rect();
-    QRectF textRect = leftButtonText->boundingRect();
-    leftButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
+    QRectF buttonRect = toggleStateButton->rect();
+    QRectF textRect = toggleStateButtonText->boundingRect();
+    toggleStateButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
                            buttonRect.top() + (buttonRect.height() - textRect.height()) / 2);
 
     // Add small green box on the right side
-    rightBox = new QGraphicsRectItem(this);
-    rightBox->setRect(rect().width() - 31, (rect().height() / 2) - 10, 25, 25);
-    rightBox->setBrush(Qt::black);
-}
-
-void PowerSource::setNodeName(const QString &name) {
-    nodeName = name;
-    nodeNameItem->setPlainText(name);
-    // Calculate the position for the text background
-    QRectF textRect = nodeNameItem->boundingRect();
-    qreal backgroundWidth = textRect.width() + 6; // Reduced padding
-    qreal backgroundHeight = textRect.height() - 2; // Reduced height
-    textBackgroundItem->setRect(0, 0, backgroundWidth, backgroundHeight);
-
-    // Center the text and background
-    qreal xPos = rect().center().x() - backgroundWidth / 2;
-    qreal yPos = rect().top() - backgroundHeight / 2; // Center it on the top border
-
-    textBackgroundItem->setPos(xPos, yPos);
-    nodeNameItem->setPos(xPos + 3, yPos); // Add padding for the text inside the background
-}
-
-void PowerSource::setImage(const QPixmap& pixmap) {
-    if (!pixmap.isNull()) {
-        QPixmap scaledPixmap = pixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation); // Adjust size as needed
-        imageItem->setPixmap(scaledPixmap);
-        // Calculate the center position of the node and adjust for the scaled image size
-        qreal xPos = (rect().width() - scaledPixmap.width()) / 2;
-        qreal yPos = (rect().height() - scaledPixmap.height()) / 2 + 5;
-        imageItem->setPos(xPos, yPos);
-        qDebug() << "Image set successfully.";
-    } else {
-        qDebug() << "Failed to load image.";
-    }
+    stateDisplay = new QGraphicsRectItem(this);
+    stateDisplay->setRect(rect().width() - 31, (rect().height() / 2) - 10, 25, 25);
+    stateDisplay->setBrush(Qt::black);
 }
 
 void PowerSource::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        if (leftButton->contains(event->pos())) {
+        if (toggleStateButton->contains(event->pos())) {
             buttonPressed = true;
             updateButtonAppearance(true);
             handleButtonClick(event);
@@ -135,7 +90,7 @@ void PowerSource::ChangeState(State state) {
 
     if (state == DISABLED)
     {
-        rightBox->setBrush(Qt::black);
+        stateDisplay->setBrush(Qt::black);
         if (outputPoint->getConnection())
         {
             auto conn = outputPoint->getConnection();
@@ -144,7 +99,7 @@ void PowerSource::ChangeState(State state) {
     }
     if (state == OFF)
     {
-        rightBox->setBrush(Qt::red);
+        stateDisplay->setBrush(Qt::red);
         if (outputPoint->getConnection())
         {
             auto conn = outputPoint->getConnection();
@@ -153,7 +108,7 @@ void PowerSource::ChangeState(State state) {
     }
     if (state == ON)
     {
-        rightBox->setBrush(Qt::green);
+        stateDisplay->setBrush(Qt::green);
         if (outputPoint->getConnection())
         {
             auto conn = outputPoint->getConnection();
@@ -191,13 +146,10 @@ void PowerSource::Update(State state) {
     // The switch doesn't have any objects, this is just for show.
 }
 
-ConnectionPoint *PowerSource::getInputPoint() const {
-    return nullptr;
-}
-
-ConnectionPoint *PowerSource::getOutputPoint() const {
+ConnectionPoint *PowerSource::getOutputXPoint() const {
     return outputPoint;
 }
+
 
 void PowerSource::handleButtonClick(QGraphicsSceneMouseEvent *event) {
     ToggleState();
@@ -206,16 +158,16 @@ void PowerSource::handleButtonClick(QGraphicsSceneMouseEvent *event) {
 
 void PowerSource::updateButtonAppearance(bool pressed) {
     if (pressed) {
-        leftButton->moveBy(1, 1); // Move button slightly down and right
-        leftButton->setBrush(Qt::darkGray); // Change color to indicate it's pressed
+        toggleStateButton->moveBy(1, 1); // Move button slightly down and right
+        toggleStateButton->setBrush(Qt::darkGray); // Change color to indicate it's pressed
     } else {
-        leftButton->moveBy(-1, -1); // Move button back to original position
-        leftButton->setBrush(Qt::gray); // Change color back to original
+        toggleStateButton->moveBy(-1, -1); // Move button back to original position
+        toggleStateButton->setBrush(Qt::gray); // Change color back to original
     }
     // Update text position accordingly
-    QRectF buttonRect = leftButton->rect();
-    QRectF textRect = leftButtonText->boundingRect();
-    leftButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
+    QRectF buttonRect = toggleStateButton->rect();
+    QRectF textRect = toggleStateButtonText->boundingRect();
+    toggleStateButtonText->setPos(buttonRect.left() + (buttonRect.width() - textRect.width()) / 2,
                            buttonRect.top() + (buttonRect.height() - textRect.height()) / 2);
 }
 

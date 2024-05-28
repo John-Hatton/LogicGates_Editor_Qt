@@ -10,7 +10,7 @@
 #include <QBrush>
 #include <QObject>
 #include <QFont>
-
+#include <QCursor>
 
 
 
@@ -43,11 +43,42 @@ public:
         imageItem = new QGraphicsPixmapItem(this);
     }
 
-    virtual void setNodeName(const QString &name) = 0;
-    virtual void setImage(const QPixmap &pixmap) = 0;
+    virtual void setNodeName(const QString &name)
+    {
+        nodeName = name;
+        nodeNameItem->setPlainText(name);
+        // Calculate the position for the text background
+        QRectF textRect = nodeNameItem->boundingRect();
+        qreal backgroundWidth = textRect.width() + 6; // Reduced padding
+        qreal backgroundHeight = textRect.height() - 2; // Reduced height
+        textBackgroundItem->setRect(0, 0, backgroundWidth, backgroundHeight);
 
-    virtual ConnectionPoint *getInputPoint() const = 0;
-    virtual ConnectionPoint *getOutputPoint() const = 0;
+        // Center the text and background
+        qreal xPos = rect().center().x() - backgroundWidth / 2;
+        qreal yPos = rect().top() - backgroundHeight / 2; // Center it on the top border
+
+        textBackgroundItem->setPos(xPos, yPos);
+        nodeNameItem->setPos(xPos + 3, yPos); // Add padding for the text inside the background
+    }
+    virtual void setImage(const QPixmap &pixmap)
+    {
+        if (!pixmap.isNull()) {
+            QPixmap scaledPixmap = pixmap.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation); // Adjust size as needed
+            imageItem->setPixmap(scaledPixmap);
+            // Calculate the center position of the node and adjust for the scaled image size
+            qreal xPos = (rect().width() - scaledPixmap.width()) / 2;
+            qreal yPos = (rect().height() - scaledPixmap.height()) / 2 + 5;
+            imageItem->setPos(xPos, yPos);
+            qDebug() << "Image set successfully.";
+        } else {
+            qDebug() << "Failed to load image.";
+        }
+    };
+
+    virtual ConnectionPoint *getInputXPoint() const { return nullptr; };
+    virtual ConnectionPoint *getInputYPoint() const { return nullptr; };
+    virtual ConnectionPoint *getOutputXPoint() const { return nullptr; };
+    virtual ConnectionPoint *getOutputYPoint() const { return nullptr; };
 
 
 

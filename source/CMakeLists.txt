@@ -11,6 +11,12 @@ set(SOURCES
 
 		LogicGates/PowerSource.cpp
 		LogicGates/DisplayOutput.cpp
+		LogicGates/AbstractTwoInputNode.cpp
+		LogicGates/Gates/XorGate.cpp
+		LogicGates/Gates/AndGate.cpp
+		LogicGates/Gates/OrGate.cpp
+		LogicGates/Gates/BufferGate.cpp
+		LogicGates/Gates/TriStateBufferGate.cpp
 
 )
 

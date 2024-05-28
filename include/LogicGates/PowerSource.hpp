@@ -17,9 +17,6 @@ private:
 public:
     PowerSource();
 
-    void setNodeName(const QString &name) override;
-    void setImage(const QPixmap &pixmap) override;
-
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -31,17 +28,14 @@ public:
     // IObserver interface methods
     void Update(State state) override;
 
-    ConnectionPoint *getInputPoint() const;
-    ConnectionPoint *getOutputPoint() const;
+    ConnectionPoint *getOutputXPoint() const override;
 
 
 protected:
     ConnectionPoint* outputPoint;
-
-    QGraphicsRectItem* leftButton;
-    QGraphicsTextItem* leftButtonText;
-    QGraphicsRectItem* rightBox;
-
+    QGraphicsRectItem* toggleStateButton;
+    QGraphicsTextItem* toggleStateButtonText;
+    QGraphicsRectItem* stateDisplay;
     bool buttonPressed;
 
     void handleButtonClick(QGraphicsSceneMouseEvent *event);
